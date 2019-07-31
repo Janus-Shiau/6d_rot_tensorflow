@@ -2,7 +2,8 @@
 6D rotation representation (["On the Continuity of Rotation Representations in Neural Networks"](https://arxiv.org/abs/1812.07035)) for tensorflow.
 
 ### Environment 
-This code is implemmented and tested with [tensorflow](https://www.tensorflow.org/) 1.11.0.
+This code is implemmented and tested with [tensorflow](https://www.tensorflow.org/) 1.11.0. \
+I didn't use any spetial operator, so it should also work for other version of tensorflow.
 
 ### Usage
 Just add the tf_rotation6d_to_matrix after your output, whose last dimension of tensor should be 6.
