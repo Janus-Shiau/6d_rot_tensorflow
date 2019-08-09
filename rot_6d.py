@@ -13,6 +13,7 @@ Conference on Neural Information Processing Systems (NeurIPS) 2019.
 '''
 import tensorflow as tf
 
+
 def tf_rotation6d_to_matrix(r6d):
     """ Compute rotation matrix from 6D rotation representation.
         Implementation base on 
@@ -23,6 +24,10 @@ def tf_rotation6d_to_matrix(r6d):
             flattened rotation matrix (last dimension is 9)
     """
     tensor_shape = r6d.get_shape().as_list()
+
+    if not tensor_shape[-1] == 6:
+        raise AttributeError("The last demension of the inputs in tf_rotation6d_to_matrix should be 6, \
+            but found tensor with shape {}".format(tensor_shape[-1]))
 
     with tf.variable_scope('rot6d_to_matrix'):
         r6d   = tf.reshape(r6d, [-1,6])
@@ -46,3 +51,27 @@ def tf_rotation6d_to_matrix(r6d):
             matrix = tf.reshape(matrix, output_shape)
 
     return matrix
+
+def tf_matrix_to_rotation6d(mat):
+    """ Get 6D rotation representation for rotation matrix.
+        Implementation base on 
+            https://arxiv.org/abs/1812.07035
+        [Inputs]
+            flattened rotation matrix (last dimension is 9)
+        [Returns]
+            6D rotation representation (last dimension is 6)
+    """
+    tensor_shape = mat.get_shape().as_list()
+
+    if not ((tensor_shape[-1] == 3 and tensor_shape[-2] == 3) or (tensor_shape[-1] == 9)):
+        raise AttributeError("The inputs in tf_matrix_to_rotation6d should be [...,9] or [...,3,3], \
+            but found tensor with shape {}".format(tensor_shape[-1]))
+
+    with tf.variable_scope('matrix_to_ration_6d'):
+        mat = tf.reshape(mat, [-1, 3, 3])
+        r6d = tf.concat([mat[...,0], mat[...,1]], axis=-1)
+
+        if len(tensor_shape) == 1:
+            r6d = tf.reshape(r6d, [6])
+
+    return r6d
